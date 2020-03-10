@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>CSCI 360 Project Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="jquery.js"></script>
+    <script src="variables.js"></script>
+    <script src="opcode.js"></script>
+    <script src="demo.js"></script>
+</head>
+
+
+<body>
+<div class="container">
+    <div class="panel panel-primary">
+      <div class="panel-body" style="padding-top:0px;">
+          <div class="row">
+                <div class="col-sm-6" style="padding:5px;">
+                <div class="panel panel-primary">
+    <div class="panel-heading">Assembly Instruction Panel</div>
+    <div class="panel-body" style="padding-top:0px;padding-bottom:0px;">
+        <div class="row">
+                <div class="col-xs-12">
+                        <textarea  style="max-height:500px;overflow:scroll;font-size:20px;" class="form-control" rows="25" id="assemblyCode">fun_1(int, int, int, int, int, int, int, int, int):
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], edi
+        mov     DWORD PTR [rbp-8], esi
+        mov     DWORD PTR [rbp-12], edx
+        mov     DWORD PTR [rbp-16], ecx
+        mov     DWORD PTR [rbp-20], r8d
+        mov     DWORD PTR [rbp-24], r9d
+        mov     eax, 70
+        pop     rbp
+        ret
+main:
+        push    rbp
+        mov     rbp, rsp
+        push    9
+        push    8
+        push    7
+        mov     r9d, 6
+        mov     r8d, 5
+        mov     ecx, 4
+        mov     edx, 3
+        mov     esi, 2
+        mov     edi, 1
+        call    fun_1(int, int, int, int, int, int, int, int, int)
+        add     rsp, 24
+        mov     eax, 0
+        leave
+        ret</textarea>
+                    <div style="max-height:500px;overflow:scroll;font-size:20px;" hidden id="address_code" >
+                        <table class="table" >
+                                <thead>
+                                <tr style="text-align:center;">
+                                        <th width="20%">Address</th>
+                                        <th width="80%">Instruction</th>
+                                </tr>
+                                </thead>
+                                <tbody id="address_code_table">
+
+                                </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+        </div>
+            <div class="row" style="margin-top:10px;padding-bottom:10px;">
+                    <div class="col-xs-8"></div>
+                    <div class="col-xs-4">
+                            <button class="btn btn-primary" onclick="edit()">Edit</button>
+                            <button class="btn btn-success" onclick="load()">Load</button>
+                    </div>
+            </div>
+    </div>
+</div>
+                <div class="panel panel-primary">
+    <div class="panel-heading">Function Table</div>
+    <div class="panel-body" style="padding-top:5px;padding-bottom:5px;">
+        <div class="row">
+            <table class="table" style="margin:0px;">
+                <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Address</th>
+                </tr>
+                </thead>
+                <tbody id="function_address_table" style="max-height:200px;overflow:scroll;font-size:20px;">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">Tips</div>
+    <div class="panel-body">
+        <div class="row" >
+            <div class="col-xs-12" id="tips">
+                <pre>
+1. Push return address for main function, assumed <font color="red">200</font>.
+2. Push the rbp of the function that calls the main
+   function, assumed <font color="red">3000</font>.
+1. The function label does not take any action.
+2. leave = mov rsp, rbp
+	       pop rpb
+3. ret   = pop rip
+</pre>
+            </div>
+        </div>
+    </div>
+</div>
+                </div>
+                <div class="col-sm-6" style="padding:5px;">
+                    <div class="row" >
+                        <div class="col-xs-12">
+                            <div class="panel panel-primary">
+    <div class="panel-heading">Register Panel - 64/32 bits (base10)
+    <button class="btn  btn-success" id="step" style="float:right;">step</button>
+    </div>
+    <div class="panel-body" style="font-size:20px;">
+        <div class="row" >
+            <div class="col-xs-2"><b>rbp</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rbp"
+                                                                   style="background:#df9857;"></font>
+            </div>
+            <div class="col-xs-2"><b>rsp</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rsp"
+                                                                   style="background:#df9857;"></font>
+            </div>
+            <div class="col-xs-2"><b>rip</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rip"
+                                                                   style="background:#48e17a;"></font>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2"><b>rax/eax</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rax"></font></div>
+            <div class="col-xs-2"><b>rbx/ebx</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rbx"></font></div>
+            <div class="col-xs-2"><b>rdi/edi</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rdi"></font></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2"><b>rsi/esi</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rsi"></font></div>
+            <div class="col-xs-2"><b>rdx/edx</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rdx"></font></div>
+            <div class="col-xs-2"><b>rcx/ecx</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="rcx"></font></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2"><b>r8/r8d</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="r8"></font></div>
+            <div class="col-xs-2"><b>r9/r9d</b></div>
+            <div class="col-xs-2" style="padding-left:10pt;"><font id="r9"></font></div>
+        </div>
+    </div>
+</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel panel-primary">
+    <div class="panel-heading">Stack Panel</div>
+    <div class="panel-body">
+        <div class="row" >
+            <table class="table" style="margin:0px;">
+                <thead>
+                <tr >
+                    <th width="33%" style="text-align:center;">&nbsp;&nbsp;Address</th>
+                    <th width="33%" style="text-align:center;">&nbsp;&nbsp;Content</th>
+                    <th width="33%" style="text-align:center;">&nbsp;&nbsp;Label</th>
+                </tr>
+                </thead>
+            </table>
+            <div style="height:350px;overflow-y:scroll;">
+            <table class="table" style="margin:0px;font-size: 20px;">
+                <tbody id="stack_table" style='text-align:center;'>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Memory</div>
+                                <div class="panel-body" style="height:120px;overflow:scroll;">
+                                    <div class="row">
+                                        <div class="col-xs-12">add your memory data here</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row"> 
+						<div class="col-xs-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading">Text</div>
+                                <div class="panel-body" style="height:120px;overflow:scroll;">
+                                    <div class="row">
+                                        <div class="col-xs-12">File Text Here.</div>
+                                    </div>
+                                </div>
+								<div class="row">
+									<div class="col-xs-8"></div>
+									<div class="colxs-4">
+										<button class="btn btn-primary">Edit</button>
+										<button class="btn btn-success">Load</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+                </div>
+          </div>
+      </div>
+    </div>
+    <div class="row" style="text-align:center;">
+        <div>@ Xiaojie Zhang</div>
+        <div>This web-tool was edited by Xiaojie Zhang's students</div>
+    </div>
+</div>
+
+</body>
+</html>
