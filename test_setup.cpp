@@ -2,36 +2,39 @@
 
 using namespace std;
 
-int m=0,mx=0,tmp=0,count = 1;
+void start(int &m,int &mx){
 
-void start(){
-	
 	cout << "Enter number." << endl;
 	cin >> m;
 	mx = m;
 	cout << m << " " << mx << endl;
-	
+
 }
 
-void repeat(){
-	
+void repeat(int &m,int &mx){
+
+	int tmp;
 	cout << "Enter Number." << endl;
 	cin >> tmp;
 	if(tmp > mx)
 		mx = tmp;
 	if(m > tmp)
 		m = tmp;
-	count++;
 	cout << m << " " << mx << endl;
-	
-	
+
+
 }
 
 int main(){
 
-	start();
-	while(count < 9)
-		repeat();
+	int m=0,mx=0,count = 0;
+	start(m,mx);
+	while(count < 9){
+
+		repeat(m,mx);
+		count++;
+
+	}
 	return 0;
 
 }
