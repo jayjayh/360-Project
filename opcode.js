@@ -440,6 +440,7 @@ var je_handler = function(current_code)
 				registers["rip"] = jump_address;
 			}
 		}
+		reset_rflag();
 		return true;
 	}
 	else
@@ -459,6 +460,7 @@ var jl_handler = function(current_code)
 				registers["rip"] = jump_address;
 			}
 		}
+		reset_rflag();
 		return true;
 	}
 	else
@@ -478,6 +480,7 @@ var jle_handler = function(current_code)
 				registers["rip"] = jump_address;
 			}
 		}
+		reset_rflag();
 		return true;
 	}
 	else
@@ -497,6 +500,7 @@ var jge_handler = function(current_code)
 				registers["rip"] = jump_address;
 			}
 		}
+		reset_rflag();
 		return true;
 	}
 	else
@@ -516,6 +520,7 @@ var jne_handler = function(current_code)
 				registers["rip"] = jump_address;
 			}
 		}
+		reset_rflag();
 		return true;
 	}
 	else
