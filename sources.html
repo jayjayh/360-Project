@@ -97,12 +97,34 @@ main:
         </div>
     </div>
 </div>
+
+<div class="panel panel-primary">
+</div>
+                <div class="panel panel-primary">
+    <div class="panel-heading">Label Table</div>
+    <div class="panel-body" style="padding-top:5px;padding-bottom:5px;">
+        <div class="row">
+            <table class="table" style="margin:0px;">
+                <thead>
+                <tr>
+                    <th>Label</th>
+                    <th>Address</th>
+                </tr>
+                </thead>
+                <tbody id="label_address_table" style="max-height:200px;overflow:scroll;font-size:20px;">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <div class="panel panel-primary">
     <div class="panel-heading">Tips</div>
     <div class="panel-body">
         <div class="row" >
             <div class="col-xs-12" id="tips">
                 <pre>
+
 1. Push return address for main function, assumed <font color="red">200</font>.
 2. Push the rbp of the function that calls the main
    function, assumed <font color="red">3000</font>.
