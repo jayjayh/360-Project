@@ -242,7 +242,7 @@ var add_handler = function(current_code){
         address = get_address(opRand[0]);   // get address of DWORD PTR [rbp-8]
         old_value = get_stack_table_value_by_address(address);
         if($.isNumeric(opRand[1])){  // the source is an immediate value : add DWORD PTR [rbp-8], 100
-            update_stack_table_value(address, old_value + opRand[1], 4);
+            update_stack_table_value(address, old_value + parseInt(opRand[1]), 4);
         }else if(is_register_64(opRand[1])){  // the source is a register : add DWORD PTR [rbp-8], eax
             update_stack_table_value(address, old_value + registers[opRand[1]], 4);
         }
@@ -274,5 +274,287 @@ var function_handler = function(current_code){   // call f1(int, int)
     }
     return true;
 }
+
+var jmp_handler = function(current_code)
+{
+	opCode ="jmp";
+	label_name = $.trim(current_code.substring(3, current_code.length));
+	for(var x=0; x<label_table.length;x++){
+		if(label_table[x]["label"] == label_name){
+			jump_address = label_table[x]["address"];
+            registers["rip"] = jump_address;
+		}
+	}
+	return true;
+	
+}
+var inc_handler = function(current_code)
+{
+	opCode = "inc";
+	current_code = $.trim(current_code.substring(3, current_code.length));
+	str1 = "add ".concat(current_code, ", 1");
+	add_handler(str1);
+	
+}
+var dec_handler = function(current_code)
+{
+	opCode = "dec";
+	current_code = $.trim(current_code.substring(3, current_code.length));
+	str1 = "sub ".concat(current_code, ", 1");
+	sub_handler(str1);
+}
+var equal = function()
+{
+	rFlag["je"] = true;
+	rFlag["jge"] = true;
+	rFlag["jle"] = true;
+}
+var less_than = function()
+{
+	rFlag["jle"] = true;		
+	rFlag["jl"] = true;
+}
+var greater_than = function()
+{
+	rFlag["jge"] = true;
+	rFlag["jg"] = true;
+}
+var not_equal = function()
+{
+	rFlag["jne"] = true;
+}
+var reset_rflag = function()
+{
+	rFlag["je"] = false;
+	rFlag["jge"] = false;
+	rFlag["jle"] = false;
+	rFlag["jg"] = false;
+	rFlag["jl"] = false;
+	rFlag["jne"] = false;
+}
+var cmp_handler = function(current_code)
+{
+	opCode = "cmp";
+	current_code = $.trim(current_code.substring(3, current_code.length));
+    var opRand = current_code.split(",");
+    for (var x = 0; x < opRand.length; x++) {
+            opRand[x] = $.trim(opRand[x]);
+    }
+    opRand = convert32To64(opRand);
+	if(is_register_64(opRand[0]))
+	{
+		if($.isNumeric(opRand[1]))//immediate value as oprand 1
+		{
+			if(registers[opRand[0]] == parseInt(opRand[1]))//comp rax ,xxx
+			{
+				equal();
+			}
+			else if(registers[opRand[0]] < parseInt(opRand[1]))
+			{
+				less_than();
+			}
+			else if(registers[opRand[0]] > parseInt(opRand[1]))
+			{
+				greater_than();
+			}
+			else if(registers[opRand[0]] != parseInt(opRand[1]))
+			{
+				not_equal();
+			}
+		}
+		else if(is_register_64(opRand[1]))
+		{
+			if(registers[opRand[0]] == registers[opRand[1]])//comp ecx,edx
+			{
+				equal();
+			}
+			else if(registers[opRand[0]] < registers[opRand[1]])
+			{
+				less_than();
+			}
+			else if(registers[opRand[0]] > registers[opRand[1]])
+			{
+				greater_than();
+			}
+			else if(registers[opRand[0]] != registers[opRand[1]])
+			{
+				not_equal();
+			}
+		}
+
+	}
+	else if(is_memory_address(opRand[0]))
+	{
+		address = get_address(opRand[0]);   // get address of DWORD PTR [rbp-8]
+        old_value = get_stack_table_value_by_address(address);
+        if($.isNumeric(opRand[1])){  // the source is an immediate value : sub DWORD PTR [rbp-8], 100
+			if(old_value == parseInt(opRand[1]))
+			{
+				equal();
+			}
+			else if(old_value < parseInt(opRand[1]))
+			{
+				less_than();
+			}
+			else if(old_value > parseInt(opRand[1]))
+			{
+				greater_than();
+			}
+			else if(old_value != parseInt(opRand[1]))
+			{
+				not_equal();
+			}
+		}
+	}
+
+}
+var jg_handler = function(current_code)
+{
+	opCode ="jg";
+	label_name = $.trim(current_code.substring(2, current_code.length));
+	if(rFlag["jg"] == true)
+	{
+		for(var x=0; x<label_table.length;x++){
+			if(label_table[x]["label"] == label_name){
+				jump_address = label_table[x]["address"];
+				registers["rip"] = jump_address;
+			}
+		}
+		reset_rflag();
+		return true;
+	}
+	else
+	{
+		registers["rip"] -= 4;
+	}
+}
+var je_handler = function(current_code)
+{
+	opCode ="je";
+	label_name = $.trim(current_code.substring(2, current_code.length));
+	if(rFlag["je"] == true)
+	{
+		for(var x=0; x<label_table.length;x++){
+			if(label_table[x]["label"] == label_name){
+				jump_address = label_table[x]["address"];
+				registers["rip"] = jump_address;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		registers["rip"] -= 4;
+	}
+}
+var jl_handler = function(current_code)
+{
+	opCode ="jl";
+	label_name = $.trim(current_code.substring(2, current_code.length));
+	if(rFlag["jl"] == true)
+	{
+		for(var x=0; x<label_table.length;x++){
+			if(label_table[x]["label"] == label_name){
+				jump_address = label_table[x]["address"];
+				registers["rip"] = jump_address;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		registers["rip"] -= 4;
+	}
+}
+var jle_handler = function(current_code)
+{
+	opCode ="jle";
+	label_name = $.trim(current_code.substring(3, current_code.length));
+	if(rFlag["jle"] == true)
+	{
+		for(var x=0; x<label_table.length;x++){
+			if(label_table[x]["label"] == label_name){
+				jump_address = label_table[x]["address"];
+				registers["rip"] = jump_address;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		registers["rip"] -= 4;
+	}
+}
+var jge_handler = function(current_code)
+{
+	opCode ="jge";
+	label_name = $.trim(current_code.substring(3, current_code.length));
+	if(rFlag["jge"] == true)
+	{
+		for(var x=0; x<label_table.length;x++){
+			if(label_table[x]["label"] == label_name){
+				jump_address = label_table[x]["address"];
+				registers["rip"] = jump_address;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		registers["rip"] -= 4;
+	}
+}
+var jne_handler = function(current_code)
+{
+	opCode ="jne";
+	label_name = $.trim(current_code.substring(3, current_code.length));
+	if(rFlag["jng"] == true)
+	{
+		for(var x=0; x<label_table.length;x++){
+			if(label_table[x]["label"] == label_name){
+				jump_address = label_table[x]["address"];
+				registers["rip"] = jump_address;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		registers["rip"] -= 4;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

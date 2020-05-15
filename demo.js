@@ -59,6 +59,27 @@ var execute = function(){
         registers["rip"] -= 4;
     }else if(current_code.indexOf('call') == 0){
         function_handler(current_code);
+	}else if(current_code.indexOf('jmp') == 0){
+        jmp_handler(current_code);
+	}else if(current_code.indexOf('inc') == 0){
+        inc_handler(current_code);
+	}else if(current_code.indexOf('dec') == 0){
+        dec_handler(current_code);	
+	}else if(current_code.indexOf('cmp') == 0){
+        cmp_handler(current_code);
+		registers["rip"] -= 4;	
+	}else if(current_code.indexOf('je') == 0){
+        je_handler(current_code);
+	}else if(current_code.indexOf('jg') == 0){
+        jg_handler(current_code);
+	}else if(current_code.indexOf('jl') == 0){
+        jl_handler(current_code);	
+	}else if(current_code.indexOf('jle') == 0){
+        jle_handler(current_code);	
+	}else if(current_code.indexOf('jge') == 0){
+        jge_handler(current_code);
+	}else if(current_code.indexOf('jne') == 0){
+        jne_handler(current_code);
     }else{
         registers["rip"] -= 4;
     }
@@ -100,6 +121,7 @@ var initial_stack_table_and_registers = function(){
 var initial_code_address = function(){
 	address_code_table = [];
 	function_table = [];
+	label_table = [];
     $("#address_code_table").html("");
     var assemblyCode = document.getElementById('assemblyCode');
     var lines = assemblyCode.value.split("\n");
@@ -122,12 +144,22 @@ var initial_code_address = function(){
                 "address": text_start_address
             })
         }
+		if(lines[x].indexOf(".L") == 0){     // for other functions, push into function table
+            label_table.push({
+                "label": lines[x].substring(0, lines[x].length - 1),
+                "address": text_start_address
+            })
+        }
         $("#address_code_table").append("<tr id='code_" + text_start_address + "'><td>" + text_start_address + "</td><td>" + lines[x] + "</td></tr>");
         text_start_address -= 4;
     }
     $("#function_address_table").html("");
     for (var x = 0; x < function_table.length; x++) {
         $("#function_address_table").append("<tr><td>" + function_table[x]["label"] + "</td><td>" + function_table[x]["address"] + "</td></tr>")
+    }
+	$("#label_address_table").html("");
+    for (var i = 0; i < label_table.length; i++) {
+        $("#label_address_table").append("<tr><td>" + label_table[i]["label"] + "</td><td>" + label_table[i]["address"] + "</td></tr>")
     }
 }
 
