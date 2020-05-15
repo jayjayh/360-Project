@@ -115,6 +115,75 @@ main:
         </div>
     </div>
 </div>
+
+<div class="panel panel-primary">
+
+  <div class="panel-heading">Source</div>
+  <div class="panel-body">
+
+    <div class="row">
+
+      <div class="col-xs-12">
+
+        <textarea style="max-height:500px;overflow:scroll;font-size:20px;" class="form-control" rows="25" id="textEdit">#include < iostream >
+using namespace std;
+
+        int m=0,mx=0,tmp=0,count = 1;
+
+        void start()
+        {
+
+        	cout << "Enter number." << endl;
+        	cin >> m;
+        	mx = m;
+        	cout << m << " " << mx << endl;
+
+        }
+
+        void repeat()
+        {
+
+        	cout << "Enter Number." << endl;
+        	cin >> tmp;
+        	if(tmp > mx)
+        		mx = tmp;
+        	if(m > tmp)
+        		m = tmp;
+        	count++;
+        	cout << m << " " << mx << endl;
+
+
+        }
+
+        int main()
+        {
+
+        	start();
+        	while(count < 9)
+        		repeat();
+        	return 0;
+
+        }</textarea>
+
+        <div style="max-height:500px;overflow:scroll;font-size:15px;" hidden id="text_code"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row" style = "margin-top:10px; padding-bottom:10px;">
+    <div class="col-xs-8"></div>
+    <div class="col-xs-4">
+      <button class="btn btn-primary" onclick="editText()">Edit</button>
+      <button class="btn btn-success" onclick="loadText()">Load</button>
+  </div>
+  </div>
+
+</div>
+
+
                 </div>
                 <div class="col-sm-6" style="padding:5px;">
                     <div class="row" >
@@ -194,33 +263,31 @@ main:
                         <div class="col-xs-12">
                             <div class="panel panel-primary">
                                 <div class="panel-heading">Memory</div>
-                                <div class="panel-body" style="height:120px;overflow:scroll;">
+                                <div class="panel-body">
                                     <div class="row">
-                                        <div class="col-xs-12">add your memory data here</div>
+                                        <div class="col-xs-12">
+
+                                          <div style="max-height:500px;overflow:scroll;font-size:20px;" id="memory_text_code">
+
+                                            <table class="table" >
+                                              <thead>
+                                              <tr style="text-align:center;">
+                                                  <th width="20%">Address</th>
+                                                  <th width="80%">Data</th>
+                                              </tr>
+                                              </thead>
+                                              <tbody id="text_code_table">
+                                              </tbody>
+                                            </table>
+
+                                          </div>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
-					<div class="row"> 
-						<div class="col-xs-12">
-							<div class="panel panel-primary">
-								<div class="panel-heading">Text</div>
-                                <div class="panel-body" style="height:120px;overflow:scroll;">
-                                    <div class="row">
-                                        <div class="col-xs-12">File Text Here.</div>
-                                    </div>
-                                </div>
-								<div class="row">
-									<div class="col-xs-8"></div>
-									<div class="colxs-4">
-										<button class="btn btn-primary">Edit</button>
-										<button class="btn btn-success">Load</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
 					</div>
                 </div>
           </div>
