@@ -63,8 +63,10 @@ var execute = function(){
         jmp_handler(current_code);
 	}else if(current_code.indexOf('inc') == 0){
         inc_handler(current_code);
+		registers["rip"] -= 4;
 	}else if(current_code.indexOf('dec') == 0){
-        dec_handler(current_code);	
+        dec_handler(current_code);
+		registers["rip"] -= 4;
 	}else if(current_code.indexOf('cmp') == 0){
         cmp_handler(current_code);
 		registers["rip"] -= 4;	
@@ -79,7 +81,10 @@ var execute = function(){
 	}else if(current_code.indexOf('jge') == 0){
         jge_handler(current_code);
 	}else if(current_code.indexOf('jne') == 0){
-        jne_handler(current_code);
+        jne_handler(current_code);	
+	}else if(current_code.indexOf('lea') == 0){
+        lea_handler(current_code);
+		registers["rip"] -= 4;	
     }else{
         registers["rip"] -= 4;
     }

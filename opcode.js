@@ -528,10 +528,28 @@ var jne_handler = function(current_code)
 		registers["rip"] -= 4;
 	}
 }
-
-
-
-
+var lea_handler = function(current_code)
+{
+	opCode = "lea";
+	current_code = $.trim(current_code.substring(3, current_code.length));
+    var opRand = current_code.split(",");
+    for (var x = 0; x < opRand.length; x++) {
+            opRand[x] = $.trim(opRand[x]);
+    }
+	if(is_register_64(opRand[0]))
+	{
+		if(is_memory_address(opRand[1]))
+		{
+			var regExp = /\[([^]+)\]/;
+			var matches = regExp.exec(opRand);
+			address = matches[0].substring(1, matches[0].length-1).replace(/\s/g, ''); // [rbp - 4]
+			reg = address.substring(0, 3);  // rbp
+			value = parseInt(address.substring(3, address.length))  // -4
+			registers[opRand[0]] = registers[reg]+ 2*value;
+		}
+	}
+	
+}
 
 
 
