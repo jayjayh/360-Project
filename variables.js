@@ -10,4 +10,6 @@ var function_table = [];
 var address_code_table = [];
 var stack_table = [];
 var memory_table = [];
+var label_table = []
+var rFlag = {"je":false,"jge":false,"jle":false,"jg":false, "jl":false,"jne":false}
 var waiting_input = false;
