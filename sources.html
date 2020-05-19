@@ -52,7 +52,8 @@ main:
         add     rsp, 24
         mov     eax, 0
         leave
-        ret</textarea>
+        ret
+</textarea>
                     <div style="max-height:500px;overflow:scroll;font-size:20px;" hidden id="address_code" >
                         <table class="table" >
                                 <thead>
@@ -98,8 +99,6 @@ main:
     </div>
 </div>
 
-<div class="panel panel-primary">
-</div>
                 <div class="panel panel-primary">
     <div class="panel-heading">Label Table</div>
     <div class="panel-body" style="padding-top:5px;padding-bottom:5px;">
@@ -124,7 +123,6 @@ main:
         <div class="row" >
             <div class="col-xs-12" id="tips">
                 <pre>
-
 1. Push return address for main function, assumed <font color="red">200</font>.
 2. Push the rbp of the function that calls the main
    function, assumed <font color="red">3000</font>.
@@ -148,44 +146,48 @@ main:
       <div class="col-xs-12">
 
         <textarea style="max-height:500px;overflow:scroll;font-size:20px;" class="form-control" rows="25" id="textEdit">#include < iostream >
+
 using namespace std;
 
-        int m=0,mx=0,tmp=0,count = 1;
+void start(int &m,int &mx)
+{
 
-        void start()
-        {
+	cout << "Enter number." << endl;
+	cin >> m;
+	mx = m;
+	cout << m << " " << mx << endl;
 
-        	cout << "Enter number." << endl;
-        	cin >> m;
-        	mx = m;
-        	cout << m << " " << mx << endl;
+}
 
-        }
+void repeat(int &m,int &mx)
+{
 
-        void repeat()
-        {
-
-        	cout << "Enter Number." << endl;
-        	cin >> tmp;
-        	if(tmp > mx)
-        		mx = tmp;
-        	if(m > tmp)
-        		m = tmp;
-        	count++;
-        	cout << m << " " << mx << endl;
+	int tmp;
+	cout << "Enter Number." << endl;
+	cin >> tmp;
+	if(tmp > mx)
+		mx = tmp;
+	if(m > tmp)
+		m = tmp;
+	cout << m << " " << mx << endl;
 
 
-        }
+}
 
-        int main()
-        {
+int main()
+{
 
-        	start();
-        	while(count < 9)
-        		repeat();
-        	return 0;
+	int m=0,mx=0,count = 0;
+	start(m,mx);
+	while(count < 9){
 
-        }</textarea>
+		repeat(m,mx);
+		count++;
+
+	}
+	return 0;
+
+}</textarea>
 
         <div style="max-height:500px;overflow:scroll;font-size:15px;" hidden id="text_code"></div>
 
@@ -281,15 +283,38 @@ using namespace std;
 </div>
                         </div>
                     </div>
+
+                    <div class = "row">
+
+                      <div class = "col-xs-12">
+
+                        <div class = "panel panel-primary">
+
+                          <div class = "panel-heading">Input</div>
+
+                            <div class = "panel-body" style = "max-height:100px;">
+
+                              <input type = "text" id = "input_box">
+                              <button class = "input_button" id = "input_button" onclick = "get_input()">Enter</button>
+
+                            </div>
+
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="panel panel-primary">
                                 <div class="panel-heading">Memory</div>
-                                <div class="panel-body">
+                                <div class="panel-body" style = "max-height:500px;overflow:scroll;">
                                     <div class="row">
                                         <div class="col-xs-12">
 
-                                          <div style="max-height:500px;overflow:scroll;font-size:20px;" id="memory_text_code">
+                                          <div style="font-size:20px;" id="memory">
 
                                             <table class="table" >
                                               <thead>
@@ -298,8 +323,11 @@ using namespace std;
                                                   <th width="80%">Data</th>
                                               </tr>
                                               </thead>
-                                              <tbody id="text_code_table">
-                                              </tbody>
+                                              <tbody id="memory_stack_table"></tbody>
+                                              <tbody id="heap_table"></tbody>
+                                              <tbody id="bss_table"></tbody>
+                                              <tbody id="initalized_data_table"></tbody>
+                                              <tbody id="text_code_table"></tbody>
                                             </table>
 
                                           </div>

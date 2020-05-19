@@ -116,7 +116,7 @@ var update_stack_table_view = function(){
         }
         $("#stack_table").append("<tr><td width='33%'>" + stack_table[x]["address"] + "</td><td width='33%'>" + stack_table[x]["content"] + "</td><td width='33%' style='vertical-align: middle;'><font style='background:#df9857;font-size:15pt;'>" + stack_table[x]["label"] + "</font></td></tr>")
     }
-    
+
 }
 
 var push_handler = function(current_code){
@@ -286,7 +286,7 @@ var jmp_handler = function(current_code)
 		}
 	}
 	return true;
-	
+
 }
 var inc_handler = function(current_code)
 {
@@ -294,7 +294,7 @@ var inc_handler = function(current_code)
 	current_code = $.trim(current_code.substring(3, current_code.length));
 	str1 = "add ".concat(current_code, ", 1");
 	add_handler(str1);
-	
+
 }
 var dec_handler = function(current_code)
 {
@@ -311,7 +311,7 @@ var equal = function()
 }
 var less_than = function()
 {
-	rFlag["jle"] = true;		
+	rFlag["jle"] = true;
 	rFlag["jl"] = true;
 }
 var greater_than = function()
@@ -548,36 +548,5 @@ var lea_handler = function(current_code)
 			registers[opRand[0]] = registers[reg]+ 2*value;
 		}
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

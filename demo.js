@@ -18,7 +18,7 @@ var get_current_code = function(){
             return address_code_table[x]["code"];
         }
     }
-    return ""
+    return "";
 }
 
 
@@ -69,22 +69,22 @@ var execute = function(){
 		registers["rip"] -= 4;
 	}else if(current_code.indexOf('cmp') == 0){
         cmp_handler(current_code);
-		registers["rip"] -= 4;	
+		registers["rip"] -= 4;
 	}else if(current_code.indexOf('je') == 0){
         je_handler(current_code);
 	}else if(current_code.indexOf('jg') == 0){
         jg_handler(current_code);
 	}else if(current_code.indexOf('jl') == 0){
-        jl_handler(current_code);	
+        jl_handler(current_code);
 	}else if(current_code.indexOf('jle') == 0){
-        jle_handler(current_code);	
+        jle_handler(current_code);
 	}else if(current_code.indexOf('jge') == 0){
         jge_handler(current_code);
 	}else if(current_code.indexOf('jne') == 0){
-        jne_handler(current_code);	
+        jne_handler(current_code);
 	}else if(current_code.indexOf('lea') == 0){
         lea_handler(current_code);
-		registers["rip"] -= 4;	
+		registers["rip"] -= 4;
     }else{
         registers["rip"] -= 4;
     }
@@ -168,7 +168,85 @@ var initial_code_address = function(){
     }
 }
 
-var update_text_instructions = function(){
+var update_memory = function(){
+
+  memory_start_address = 2000;
+  //update_memory_stack();
+  //update_memory_heap();
+  //update_memory_bss();
+  //update_memory_initialized_data();
+  update_memory_text();
+
+}
+
+var update_memory_stack = function(){
+
+  memory_table = [];
+  $("#memory_stack_table").html("");
+  $("#memory_stack_table").append("<tr id = 'stack'><td></td><td><b>Stack</b></td></tr>");
+
+}
+
+var update_memory_heap = function(){
+
+  $("#heap_table").html("");
+  $("#heap_table").append("<tr id = 'heap'><td></td><td><b>Heap</b></td></tr>");
+
+}
+
+var update_memory_bss = function(){
+
+  $("#bss_table").html("");
+  var text_code = document.getElementById('textEdit');
+  var lines = textEdit.value.split("\n");
+  var length = lines.length;
+  $("#bss_table").append("<tr id = 'bss'><td></td><td><b>BSS</b></td></tr>");
+  for(var x = 0; x < length; x++){
+
+    //console.log(lines[x].indexOf("int"));
+    if(lines[x].indexOf("{") >= 0){
+
+      while(x < length && lines[x].indexOf("}") < 0 && lines[x].indexOf("static" < 0)){
+
+        //console.log(x);
+        x++;
+
+      }
+
+    }
+    else if(lines[x].indexOf("()") >= 0){
+
+      x++;
+
+    }
+    else if(lines[x].indexOf("int")>=0){
+
+      var separate = lines[x].substring(lines[x].indexOf("int")+4,lines[x].length-1);
+      //separate = separate.split(",");
+      separate = separate.split(",");
+      console.log(separate);
+
+      for(var i = 0; i < separate.length;i++){
+
+        $("#bss_table").append("<tr id = 'bss_" + memory_start_address + "'><td>" + memory_start_address + "</td><td>" + separate[i].substring(0,separate[i].indexOf("=")) + "</td></tr>");
+        memory_start_address--;
+
+      }
+
+    }
+
+  }
+
+}
+
+var update_memory_initialized_data = function(){
+
+  $("#initialized_data_table").html("");
+  $("#initialized_data_table").append("<tr id = 'initialized_data'><td></td><td><b>Initialized Data</b></td></tr>");
+
+}
+
+var update_memory_text = function(){
 
   memory_table = [];
   $("#text_code_table").html("");
@@ -181,23 +259,84 @@ var update_text_instructions = function(){
     if(lines[x] != ""){
       memory_table.push({
 
-        "address" : x+1,
+        "address" : memory_start_address,
         "instruction": lines[x]
 
       });
-      $("#text_code_table").append("<tr id = 'text_" + (x+1) + "'><td>" + (x+1) + "</td><td>" + lines[x] + "</td></tr>");
+      $("#text_code_table").append("<tr id = 'text_" + memory_start_address + "'><td>" + memory_start_address + "</td><td>" + lines[x] + "</td></tr>");
+      memory_start_address--;
     }
 
   }
+  translate_to_assembly(memory_table,memory_table.length);
   //console.log(memory_table);
-
 
 }
 
 var update_source = function(){
 
-  console.log("hi");
   $("#text_code").html("<pre>"+document.getElementById("textEdit").value+"</pre>");
+
+}
+
+var get_input = function(){
+
+  var input = document.getElementById("input_box").value;
+  document.getElementById("input_box").value = "";
+  input = parseInt(input,10);
+  if(waiting_input && Number.isInteger(input)){
+
+    console.log(input);
+    //run function
+
+    waiting_input = false;
+
+  }
+
+}
+
+var delete_space = function(data){
+
+
+
+}
+
+var translate_to_assembly = function(data,length){
+
+  console.log(data[2]);
+  console.log(length);
+  var tab = "";
+  delete_space(data);
+  for(var x = 0; x < length; x++){
+
+    if(data[x].instruction.indexOf("void") == 0){
+
+      $("#assemblyCode").append(data[x].instruction.substring(4) + ":\n");
+
+    }
+    else if(data[x].instruction.indexOf("int") == 0){
+
+      $("#assemblyCode").append(data[x].instruction.substring(3) + ":\n");
+
+    }
+    else if(data[x].instruction == "{"){
+
+      tab = "\t";
+
+    }
+    else if(data[x].instruction == "}"){
+
+      tab = "";
+
+    }
+    else if(data[x].instruction.indexOf("cout") == 0){
+
+      $("#assemblyCode").append(tab + "out\n");
+      console.log("cout");
+
+    }
+
+  }
 
 }
 
@@ -228,7 +367,7 @@ var edit = function(){
 
 var loadText = function(){
 
-  update_text_instructions();
+  update_memory();
   update_source();
 	//initial_text_code();
 	$("#textEdit").hide();
