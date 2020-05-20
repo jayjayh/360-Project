@@ -93,13 +93,33 @@ var update_stack_table_value = function(address, value, size){
             stack_table.push({
                 "address": stack_table[stack_table.length - 1]["address"] - size,
                 "content": 0,
-                "label": ""
+                "label": "",
+				"variable": ""
             })
         }
         stack_table.push({
             "address": address,
             "content": value,
-            "label": ""
+            "label": "",
+			"variable": ""
+        })
+    }
+}
+var update_stack = function(variable, value, size){
+    var existFlag = false;
+	for(var x=0; x < stack_table.length ; x++){
+       if(stack_table[x]["variable"] == variable){
+           stack_table[x]["content"] = value;
+           existFlag = true;
+           break;
+       }
+    }
+    if(existFlag == false){
+        stack_table.unshift({
+            "address": stack_table[0]["address"] + size,
+            "content": value,
+            "label": "",
+			"variable": variable
         })
     }
 }
@@ -549,4 +569,34 @@ var lea_handler = function(current_code)
 		}
 	}
 
+}
+var out_handler = function(current_code)
+{
+	opCode ="out";
+	return_address = registers["rip"]-4;
+	label_name = $.trim(current_code.substring(3, current_code.length));
+	for(var x=0; x<label_table.length;x++){
+		if(label_table[x]["label"] == label_name){
+					console.log("hi");
+			jump_address = label_table[x]["address"];
+			console.log(jump_address);
+            registers["rip"] = jump_address;
+			console.log();
+		}
+	}
+	registers["rip"] = return_address;	
+}
+var in_handler = function(current_code)
+{
+	opCode = "in";
+	variable_name = $.trim(current_code.substring(2, current_code.length));
+	waiting_input = true;
+	current_variable = variable_name;
+}
+var store_in_handler = function(input)
+{
+	if(current_variable != ""){
+		update_stack(current_variable, input, 4);
+	}
+	current_variable = "";
 }
