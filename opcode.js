@@ -577,11 +577,9 @@ var out_handler = function(current_code)
 	label_name = $.trim(current_code.substring(3, current_code.length));
 	for(var x=0; x<label_table.length;x++){
 		if(label_table[x]["label"] == label_name){
-					//console.log("hi");
 			jump_address = label_table[x]["address"];
-			console.log(jump_address);
             registers["rip"] = jump_address;
-			console.log();
+			console.log(label_table[x]["value"]);
 		}
 	}
 	registers["rip"] = return_address;
@@ -599,4 +597,22 @@ var store_in_handler = function(input)
 		update_stack(current_variable, input, 4);
 	}
 	current_variable = "";
+}
+var set_handler = function(current_code)
+{
+	opCode = "set";
+	current_code = $.trim(current_code.substring(3, current_code.length));
+    var opRand = current_code.split(",");
+    for (var x = 0; x < opRand.length; x++) {
+            opRand[x] = $.trim(opRand[x]);
+    }
+	opRand = convert32To64(opRand);   // 32 bits register name to 64 bits register name
+    if(is_register_64(opRand[0])){ // the destination is a register : mov eax, XXX
+		 for(var i=0; i < stack_table.length ; i++){
+			if(stack_table[i]["variable"] == opRand[1]){
+				registers[opRand[0]] = parseInt(stack_table[i]["content"]);
+			}
+		}
+	}
+	
 }

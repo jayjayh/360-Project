@@ -84,6 +84,16 @@ var execute = function(){
         jne_handler(current_code);
 	}else if(current_code.indexOf('lea') == 0){
         lea_handler(current_code);
+		registers["rip"] -= 4;	
+	}else if(current_code.indexOf('out') == 0){
+        out_handler(current_code);	
+	}else if(current_code.indexOf('in') == 0){
+        in_handler(current_code);
+		if(recieved_input)
+			registers["rip"] -= 4;	
+		recieved_input = false;
+	}else if(current_code.indexOf('set') == 0){
+        set_handler(current_code);
 		registers["rip"] -= 4;
     }else{
         registers["rip"] -= 4;
@@ -146,19 +156,36 @@ var initial_code_address = function(){
         if(lines[x].indexOf("start") == 0){     // for other functions, push into function table
             function_table.push({
                 "label": lines[x].substring(0, lines[x].length - 1),
-                "address": text_start_address
+                "address": text_start_address,
+				"value" :""
+            })
+        }       
+		if(lines[x].indexOf("repeat") == 0){     // for other functions, push into function table
+            function_table.push({
+                "label": lines[x].substring(0, lines[x].length - 1),
+                "address": text_start_address,
+				"value" :""
+            })
+        }		
+		if(lines[x].indexOf("fun_") == 0){     // for other functions, push into function table
+            function_table.push({
+                "label": lines[x].substring(0, lines[x].length - 1),
+                "address": text_start_address,
+				"value" :""
             })
         }
 		if(lines[x].indexOf(".L") == 0){     // for other functions, push into function table
             label_table.push({
                 "label": lines[x].substring(0, lines[x].length - 1),
-                "address": text_start_address
+                "address": text_start_address,
+				"value": ""
             })
         }
     if(lines[x].indexOf(".S") == 0){     // for other functions, push into function table
             label_table.push({
                     "label": lines[x].substring(0, lines[x].length - 1),
-                    "address": text_start_address
+                    "address": text_start_address,
+					"value":lines[x+1]
                 })
     }
         $("#address_code_table").append("<tr id='code_" + text_start_address + "'><td>" + text_start_address + "</td><td>" + lines[x] + "</td></tr>");
