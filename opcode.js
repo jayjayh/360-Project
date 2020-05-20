@@ -577,14 +577,14 @@ var out_handler = function(current_code)
 	label_name = $.trim(current_code.substring(3, current_code.length));
 	for(var x=0; x<label_table.length;x++){
 		if(label_table[x]["label"] == label_name){
-					console.log("hi");
+					//console.log("hi");
 			jump_address = label_table[x]["address"];
 			console.log(jump_address);
             registers["rip"] = jump_address;
 			console.log();
 		}
 	}
-	registers["rip"] = return_address;	
+	registers["rip"] = return_address;
 }
 var in_handler = function(current_code)
 {

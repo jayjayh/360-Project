@@ -13,7 +13,7 @@ void start(int &m,int &mx){
 
 void repeat(int &m,int &mx){
 
-	int tmp;
+	int tmp=0;
 	cout << "Enter Number." << endl;
 	cin >> tmp;
 	if(tmp > mx)

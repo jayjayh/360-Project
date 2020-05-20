@@ -162,8 +162,8 @@ void start(int &m,int &mx)
 void repeat(int &m,int &mx)
 {
 
-	int tmp;
-	cout << "Enter Number." << endl;
+	int tmp=0;
+	cout << "Enter number." << endl;
 	cin >> tmp;
 	if(tmp > mx)
 		mx = tmp;
@@ -177,9 +177,10 @@ void repeat(int &m,int &mx)
 int main()
 {
 
-	int m=0,mx=0,count = 0;
+	int m=0,mx=0,count=0;
 	start(m,mx);
-	while(count < 9){
+	while(count < 9)
+        {
 
 		repeat(m,mx);
 		count++;

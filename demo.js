@@ -143,7 +143,7 @@ var initial_code_address = function(){
             })
             registers["rip"] = text_start_address;
         }
-        if(lines[x].indexOf("fun_") == 0){     // for other functions, push into function table
+        if(lines[x].indexOf("start") == 0){     // for other functions, push into function table
             function_table.push({
                 "label": lines[x].substring(0, lines[x].length - 1),
                 "address": text_start_address
@@ -155,6 +155,12 @@ var initial_code_address = function(){
                 "address": text_start_address
             })
         }
+    if(lines[x].indexOf(".S") == 0){     // for other functions, push into function table
+            label_table.push({
+                    "label": lines[x].substring(0, lines[x].length - 1),
+                    "address": text_start_address
+                })
+    }
         $("#address_code_table").append("<tr id='code_" + text_start_address + "'><td>" + text_start_address + "</td><td>" + lines[x] + "</td></tr>");
         text_start_address -= 4;
     }
@@ -170,7 +176,7 @@ var initial_code_address = function(){
 
 var update_memory = function(){
 
-  memory_start_address = 2000;
+  memory_start_address = 500;
   //update_memory_stack();
   //update_memory_heap();
   //update_memory_bss();
@@ -224,7 +230,7 @@ var update_memory_bss = function(){
       var separate = lines[x].substring(lines[x].indexOf("int")+4,lines[x].length-1);
       //separate = separate.split(",");
       separate = separate.split(",");
-      console.log(separate);
+      //console.log(separate);
 
       for(var i = 0; i < separate.length;i++){
 
@@ -280,43 +286,48 @@ var update_source = function(){
 }
 
 var get_input = function(){
-
+    console.log("press");
   var input = document.getElementById("input_box").value;
   document.getElementById("input_box").value = "";
   input = parseInt(input,10);
   if(waiting_input && Number.isInteger(input)){
 
-    console.log(input);
-    //run function
-
+   // console.log(input);
+    store_in_handler(input);
     waiting_input = false;
+    recieved_input = true;
+  }
+}
+
+var delete_space = function(data,length){
+
+  var cutoff = 0;
+  for(var x = 0;x < length; x++){
+
+    while(data[x].instruction.substring(0,1) == "\t")
+      data[x].instruction = data[x].instruction.substring(1);
 
   }
 
-}
-
-var delete_space = function(data){
-
-
+  return data;
 
 }
 
 var translate_to_assembly = function(data,length){
 
-  console.log(data[2]);
-  console.log(length);
   var tab = "";
-  delete_space(data);
+  get_constants(data,length);
+  data = delete_space(data,length);
   for(var x = 0; x < length; x++){
 
     if(data[x].instruction.indexOf("void") == 0){
 
-      $("#assemblyCode").append(data[x].instruction.substring(4) + ":\n");
+      $("#assemblyCode").append(data[x].instruction.substring(4) + ":\n\tpush    rbp\n\tmov     rbp,rsp\n");
 
     }
-    else if(data[x].instruction.indexOf("int") == 0){
+    else if(data[x].instruction.indexOf("int main") == 0){
 
-      $("#assemblyCode").append(data[x].instruction.substring(3) + ":\n");
+      $("#assemblyCode").append(data[x].instruction.substring(3) + ":\n\tpush    rbp\n\tmov     rbp,rsp\n");
 
     }
     else if(data[x].instruction == "{"){
@@ -332,11 +343,62 @@ var translate_to_assembly = function(data,length){
     else if(data[x].instruction.indexOf("cout") == 0){
 
       $("#assemblyCode").append(tab + "out\n");
-      console.log("cout");
+      //console.log("cout");
+
+    }
+    else if(data[x].instruction.indexOf("cin") == 0){
+
+      $("#assemblyCode").append(tab + "in\n");
+
+    }
+    else if(data[x].instruction.indexOf("int") == 0){
+
+      var variables = data[x].instruction.substring(3);
+      variables = variables.split(',');
+      variables[variables.length-1] = variables[variables.length-1].substring(0,variables[variables.length-1].length-1);
+
+      for(var i = 0; i < variables.length; i++){
+
+        $("#assemblyCode").append(tab + "push    " + variables[i].substring(variables[i].indexOf("=")+1) + "\n");
+
+      }
+
+    }
+    else if(data[x].instruction.indexOf("while") == 0){
+
+      $("#assemblyCode").append(".L"+label_number+":\n");
+      label_number++;
+      $("#assemblyCode").append(tab + "cmp     ");
+
 
     }
 
   }
+
+}
+
+var get_constants = function(data,length){
+
+  var count = 1;
+  for(var x = 0; x < length; x++){
+
+    if(data[x].instruction.indexOf("\"") > 0){
+
+      var str = get_string_from_code(data[x].instruction);
+      $("#assemblyCode").append(".S" + count + ":\n");
+      $("#assemblyCode").append("\t" + str + "\n");
+      count++;
+
+    }
+
+  }
+
+}
+
+var get_string_from_code = function(line){
+
+  var temp = line.indexOf('\"');
+  return line.substring(temp,line.indexOf('\"',temp+1)+1);
 
 }
 
